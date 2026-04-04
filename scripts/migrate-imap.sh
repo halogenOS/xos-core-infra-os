@@ -14,8 +14,8 @@ set -euo pipefail
 #   DST_HOST  — destination IMAP host (default: mail.halogenos.org)
 #   DRY_RUN   — set to 1 for dry run (no writes)
 
-SRC_HOST="${SRC_HOST:-mail.halogenos.org}"
-DST_HOST="${DST_HOST:-mail.halogenos.org}"
+SRC_HOST="${SRC_HOST:?SRC_HOST is required}"
+DST_HOST="${DST_HOST:?DST_HOST is required}"
 DRY_RUN="${DRY_RUN:-0}"
 
 if [[ $# -lt 1 ]]; then
