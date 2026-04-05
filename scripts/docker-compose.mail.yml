@@ -1,0 +1,103 @@
+# Stalwart Mail Server + TMail Webmail + Caddy reverse proxy
+#
+# Replace all occurrences of example.com with your actual domain.
+#
+# Usage:
+#   cp docker-compose.mail.yml /opt/mail/docker-compose.yml
+#   cd /opt/mail && docker compose up -d
+#
+# See docker-mail-setup.md for the full setup guide.
+
+services:
+  # ── Stalwart Mail Server ──────────────────────────────────────────────────
+  # https://stalw.art/docs/install/docker
+  stalwart:
+    image: stalwartlabs/mail-server:latest
+    container_name: stalwart
+    restart: unless-stopped
+    hostname: mail.example.com
+    volumes:
+      - stalwart-data:/opt/stalwart-mail
+    ports:
+      # SMTP (inbound mail from other servers)
+      - "25:25"
+      # SMTP submission over implicit TLS (mail clients)
+      - "465:465"
+      # IMAPS (mail clients)
+      - "993:993"
+    # Internal HTTP port for JMAP/admin UI — Caddy fronts this on :443
+    expose:
+      - "8080"
+    environment:
+      # ── Stalwart configuration via env vars ──
+      # Hostname used in SMTP banners, TLS certs, JMAP URLs
+      - STALWART_SERVER__HOSTNAME=mail.example.com
+      # ACME via Let's Encrypt for SMTP/IMAP TLS certificates
+      - STALWART_ACME__LETSENCRYPT__DIRECTORY=https://acme-v02.api.letsencrypt.org/directory
+      - STALWART_ACME__LETSENCRYPT__CONTACT=mailto:postmaster@example.com
+      - STALWART_ACME__LETSENCRYPT__DOMAINS=mail.example.com
+      - STALWART_ACME__LETSENCRYPT__DEFAULT=true
+      # Bind the HTTP listener to 8080 (Caddy handles external :443)
+      - STALWART_SERVER__LISTENER__HTTP__BIND=0.0.0.0:8080
+      - STALWART_SERVER__LISTENER__HTTP__PROTOCOL=http
+      # SMTP listener
+      - STALWART_SERVER__LISTENER__SMTP__BIND=0.0.0.0:25
+      - STALWART_SERVER__LISTENER__SMTP__PROTOCOL=smtp
+      # SMTP submission (implicit TLS)
+      - STALWART_SERVER__LISTENER__SUBMISSIONS__BIND=0.0.0.0:465
+      - STALWART_SERVER__LISTENER__SUBMISSIONS__PROTOCOL=smtp
+      - STALWART_SERVER__LISTENER__SUBMISSIONS__TLS__IMPLICIT=true
+      # IMAP (implicit TLS)
+      - STALWART_SERVER__LISTENER__IMAPTLS__BIND=0.0.0.0:993
+      - STALWART_SERVER__LISTENER__IMAPTLS__PROTOCOL=imap
+      - STALWART_SERVER__LISTENER__IMAPTLS__TLS__IMPLICIT=true
+    networks:
+      - mail
+
+  # ── TMail Webmail ─────────────────────────────────────────────────────────
+  # https://tmail.io
+  tmail:
+    image: linagora/tmail-web:latest
+    container_name: tmail
+    restart: unless-stopped
+    expose:
+      - "80"
+    environment:
+      # JMAP endpoint (Stalwart's HTTP API, reached through Docker networking)
+      - JMAP_URL=http://stalwart:8080
+    depends_on:
+      - stalwart
+    networks:
+      - mail
+
+  # ── Caddy Reverse Proxy ───────────────────────────────────────────────────
+  # Terminates TLS for web-facing services (Stalwart admin/JMAP + TMail).
+  # Stalwart handles its own TLS for SMTP and IMAP ports.
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - stalwart
+      - tmail
+    networks:
+      - mail
+
+volumes:
+  stalwart-data:
+    driver: local
+  caddy-data:
+    driver: local
+  caddy-config:
+    driver: local
+
+networks:
+  mail:
+    driver: bridge
