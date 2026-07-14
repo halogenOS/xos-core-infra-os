@@ -86,15 +86,17 @@ in
 
   services.resolved = {
     enable = true;
-    dnssec = "false";
-    fallbackDns = [
-      "1.1.1.1"
-      "1.0.0.1"
-      "2606:4700:4700::1111"
-      "2606:4700:4700::1001"
-      "9.9.9.9"
-      "2620:fe::fe"
-    ];
+    settings.Resolve = {
+      DNSSEC = "false";
+      FallbackDNS = [
+        "1.1.1.1"
+        "1.0.0.1"
+        "2606:4700:4700::1111"
+        "2606:4700:4700::1001"
+        "9.9.9.9"
+        "2620:fe::fe"
+      ];
+    };
   };
 
   # ZeroSSL EAB credentials for Caddy
@@ -103,8 +105,9 @@ in
   # Zitadel identity provider
   foundrix.services.zitadel = {
     enable = true;
-    domain = config.custom.ssoDomain;
-    orgDomain = config.custom.orgDomain;
+    webDomain = config.custom.ssoDomain;
+    adminOrg = config.custom.orgDomain;
+    orgDomains.${config.custom.orgDomain} = { };
     instanceName = "halogenOS";
     policies = {
       loginPolicy.allowExternalIdp = false;
