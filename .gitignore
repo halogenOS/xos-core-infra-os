@@ -1,3 +1,4 @@
 result
 dns-backups/
 scripts/.env.local
+.cache/
