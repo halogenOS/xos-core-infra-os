@@ -27,6 +27,7 @@ in
     # foundrixModules.services.webmail
     ./home.nix
     ./caddy.nix
+    ./options.nix
     ./branding
   ];
 
@@ -153,6 +154,47 @@ in
         otpEmail = { expirationMinutes = 15; length = 6; };
       };
     };
+  };
+
+  # Forgejo (dev-infra) OIDC apps — prod Zitadel is authoritative for both
+  # dev-infra-int and dev-infra-prod Forgejo instances. Credentials are copied
+  # out-of-band to each dev-infra host's /var/credentials/forgejo-oidc.env.
+  foundrix.services.zitadel.projects.Forgejo = lib.mkIf config.custom.isProd {
+    apps.forgejo-int = {
+      type = "confidential";
+      redirectUris = [ "https://git-int.halogenos.org/user/oauth2/zitadel/callback" ];
+    };
+    apps.forgejo-prod = {
+      type = "confidential";
+      redirectUris = [ "https://git.halogenos.org/user/oauth2/zitadel/callback" ];
+    };
+    roles.admin.displayName = "Forgejo Administrator";
+  };
+
+  # Flatten per-project role grants into a single `roles` claim so downstream
+  # OIDC consumers (currently just Forgejo) can read them without parsing
+  # Zitadel's URN-shaped default claim.
+  foundrix.services.zitadel.actions.flatRoles = lib.mkIf config.custom.isProd {
+    script = ''
+      function flatRoles(ctx, api) {
+        ctx.v1.getUser();
+        var grants = ctx.v1.user.grants;
+        if (grants === undefined || grants.count === 0) {
+          return;
+        }
+        var roles = [];
+        grants.grants.forEach(function(grant) {
+          grant.roles.forEach(function(role) {
+            roles.push(role);
+          });
+        });
+        api.v1.claims.setClaim('roles', roles);
+      }
+    '';
+    triggers = [
+      { flowType = "complementToken"; triggerType = "preUserinfoCreation"; }
+      { flowType = "complementToken"; triggerType = "preAccessTokenCreation"; }
+    ];
   };
 
   # # Stalwart mail server
