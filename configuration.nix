@@ -169,7 +169,14 @@ in
     };
     apps.forgejo-prod = {
       type = "confidential";
-      redirectUris = [ "https://git.halogenos.org/user/oauth2/zitadel/callback" ];
+      # Both URIs belong to the SAME prod Forgejo + credential: the box is
+      # first validated under git-staging, then repointed to git (a one-line
+      # gitDomain change in dev-infra). Registering both lets that repoint
+      # happen with no Zitadel change and no re-entered credential.
+      redirectUris = [
+        "https://git.halogenos.org/user/oauth2/zitadel/callback"
+        "https://git-staging.halogenos.org/user/oauth2/zitadel/callback"
+      ];
     };
     roles.admin.displayName = "Forgejo Administrator";
   };
