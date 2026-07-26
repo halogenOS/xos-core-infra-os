@@ -160,12 +160,20 @@ in
   };
 
   # Forgejo (dev-infra) OIDC apps — prod Zitadel is authoritative for both
-  # dev-infra-int and dev-infra-prod Forgejo instances. Credentials are copied
-  # out-of-band to each dev-infra host's /var/credentials/forgejo-oidc.env.
+  # dev-infra-int and dev-infra-prod Forgejo instances. An operator carries the
+  # credentials to each dev-infra host once, where operator-secrets blocks the
+  # boot until they are entered and proven against this issuer.
+  #
+  # The "SSO" path segment below is dev-infra's forgejo.nix authSourceName:
+  # Forgejo derives both the sign-in button's label and its callback route from
+  # the auth source's name, so that name is part of these URIs and the two
+  # repos have to move together. Zitadel matches redirect_uri exactly, so a
+  # rename on either side alone breaks login with invalid_request; converge
+  # core-infra BEFORE switching a dev-infra host.
   foundrix.services.zitadel.projects.Forgejo = lib.mkIf config.custom.isProd {
     apps.forgejo-int = {
       type = "confidential";
-      redirectUris = [ "https://git-int.halogenos.org/user/oauth2/zitadel/callback" ];
+      redirectUris = [ "https://git-int.halogenos.org/user/oauth2/SSO/callback" ];
     };
     apps.forgejo-prod = {
       type = "confidential";
@@ -174,8 +182,8 @@ in
       # gitDomain change in dev-infra). Registering both lets that repoint
       # happen with no Zitadel change and no re-entered credential.
       redirectUris = [
-        "https://git.halogenos.org/user/oauth2/zitadel/callback"
-        "https://git-staging.halogenos.org/user/oauth2/zitadel/callback"
+        "https://git.halogenos.org/user/oauth2/SSO/callback"
+        "https://git-staging.halogenos.org/user/oauth2/SSO/callback"
       ];
     };
     roles.admin.displayName = "Forgejo Administrator";
