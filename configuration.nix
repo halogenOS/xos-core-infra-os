@@ -192,21 +192,54 @@ in
   # Flatten per-project role grants into a single `roles` claim so downstream
   # OIDC consumers (currently just Forgejo) can read them without parsing
   # Zitadel's URN-shaped default claim.
+  #
+  # This action runs inside EVERY token request, so anything it throws becomes
+  # a 500 from /oauth/v2/token and breaks every login on the instance. Worse,
+  # the client never sees that 500: the OAuth library retries with the same
+  # code, which by then is spent, so the visible error is a thoroughly
+  # misleading "Errors.AuthRequest.NotFound". Hence the shape below — no
+  # property access that can throw, and a catch-all that fails open.
   foundrix.services.zitadel.actions.flatRoles = lib.mkIf config.custom.isProd {
     script = ''
       function flatRoles(ctx, api) {
-        ctx.v1.getUser();
-        var grants = ctx.v1.user.grants;
-        if (grants === undefined || grants.count === 0) {
-          return;
-        }
-        var roles = [];
-        grants.grants.forEach(function(grant) {
-          grant.roles.forEach(function(role) {
-            roles.push(role);
+        try {
+          ctx.v1.getUser();
+
+          // Truthiness, not `=== undefined`. These fields are Go-backed
+          // values, and a strict comparison let a non-object slip past the
+          // guard and throw on `.count` ("Cannot read property 'count' of
+          // undefined"), taking every token request with it. Zitadel's own
+          // example uses loose equality for exactly this reason. Iterating
+          // the list and testing its length also drops the dependency on
+          // `count` altogether.
+          var user = ctx.v1.user;
+          var grants = user ? user.grants : null;
+          var list = grants ? grants.grants : null;
+          if (!list || !list.length) {
+            return;
+          }
+
+          var roles = [];
+          list.forEach(function (grant) {
+            if (!grant || !grant.roles) {
+              return;
+            }
+            grant.roles.forEach(function (role) {
+              roles.push(role);
+            });
           });
-        });
-        api.v1.claims.setClaim('roles', roles);
+
+          if (roles.length) {
+            api.v1.claims.setClaim('roles', roles);
+          }
+        } catch (e) {
+          // Fail open. A user missing the roles claim is a non-admin in
+          // Forgejo, which an admin can fix in seconds; a failed token
+          // request locks everyone out of everything.
+          try {
+            require('zitadel/log').log('flatRoles: ' + e);
+          } catch (ignored) {}
+        }
       }
     '';
     triggers = [
