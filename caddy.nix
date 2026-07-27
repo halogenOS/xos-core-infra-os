@@ -35,6 +35,14 @@
   config = {
     services.caddy = {
       enable = true;
+
+      # Coupled to `admin off` below: reloading is done through the admin API,
+      # so with it disabled `caddy reload` cannot connect and the unit fails to
+      # reload — leaving the OLD config serving while the switch reports
+      # success. Restarting is the only way a config change can take effect
+      # here. Upstream defaults this to true and documents the dependency.
+      enableReload = false;
+
       globalConfig = lib.mkForce ''
         admin off
         acme_ca https://acme.zerossl.com/v2/DV90
