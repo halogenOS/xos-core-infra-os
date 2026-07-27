@@ -29,6 +29,7 @@ in
     ./caddy.nix
     ./options.nix
     ./branding
+    ./legal
   ];
 
   users.users.${userName} = {
@@ -113,20 +114,7 @@ in
       loginPolicy.allowExternalIdp = false;
       disallowPublicOrgRegistration = true;
     };
-    privacyPolicy = {
-      enable = true;
-      lastUpdated = "2 April 2026";
-      hostingProvider = {
-        name = "Hetzner Online GmbH";
-        location = "Nuremberg, Germany";
-        purpose = "Server hosting (VPS)";
-      };
-      supervisoryAuthority = {
-        name = "Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)";
-        address = "Promenade 18, 91522 Ansbach";
-        website = "https://www.lda.bayern.de";
-      };
-    };
+    # The policy itself, and the identity in it, live in ./legal.
     instance = {
       passwordComplexity = {
         minLength = 14;

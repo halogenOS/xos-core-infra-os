@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — @ssoDomain@</title>
+  <!-- Styles are inline because foundrix serves this page with Caddy's
+       `respond`, inlining the file into the config: there is no second route
+       on this host from which a stylesheet could be fetched. -->
+  <style>
+    :root {
+      color-scheme: light dark;
+      --brand: #00b4e7;
+      --fg: #1b2733;
+      --muted: #5b6b7a;
+      --bg: #dafdff;
+      --card: #ffffff;
+      --rule: #bfe3ee;
+      --link: #007394;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fg: #e6edf3;
+        --muted: #9bb0c0;
+        --bg: #001220;
+        --card: #04202f;
+        --rule: #103246;
+        --link: #4cc9f0;
+      }
+    }
+
+    html { background: var(--bg); }
+
+    body {
+      margin: 0;
+      padding: 2.5rem 1.25rem 4rem;
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    main { max-width: 46rem; margin-inline: auto; }
+
+    h1 {
+      margin: 0 0 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 3px solid var(--brand);
+      font-size: 1.9rem;
+      line-height: 1.2;
+    }
+
+    h2 { margin: 2.5rem 0 0.75rem; font-size: 1.25rem; }
+    h3 { margin: 1.75rem 0 0.5rem; font-size: 1.05rem; color: var(--muted); }
+
+    a, a:link, a:visited { color: var(--link); }
+    a:hover, a:focus { color: var(--brand); }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: color-mix(in oklab, var(--brand), transparent 88%);
+      font-size: 0.9em;
+    }
+
+    table {
+      width: 100%;
+      margin: 1rem 0;
+      border-collapse: collapse;
+      background: var(--card);
+    }
+
+    th, td {
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--rule);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: color-mix(in oklab, var(--brand), transparent 85%); }
+
+    table, pre { display: block; overflow-x: auto; }
+  </style>
+</head>
+<body>
+<main>
+
+<h1>Privacy Policy</h1>
+
+<p>This policy explains how personal data is processed by the halogenOS single
+sign-on service at <code>@ssoDomain@</code>, which authenticates users for
+halogenOS services. It is provided pursuant to Articles 13 and 14 GDPR.</p>
+
+<h2>Controller</h2>
+
+<p>@operatorName@<br>
+@operatorCareOf@<br>
+@operatorStreet@<br>
+@operatorCity@<br>
+@operatorCountryEn@</p>
+
+<p>Data protection enquiries: <a href="mailto:@emailPrivacy@">@emailPrivacy@</a></p>
+
+<p>A data protection officer has not been appointed, as the statutory thresholds
+of § 38 BDSG are not met.</p>
+
+<h2>What we process, why, and on what basis</h2>
+
+<h3>Account data</h3>
+
+<table>
+  <tr><th>Data</th><th>Purpose</th><th>Legal basis</th></tr>
+  <tr><td>Email address</td><td>Account identification, recovery, essential notifications</td><td>Art. 6(1)(b) GDPR</td></tr>
+  <tr><td>User ID</td><td>Technical account identification</td><td>Art. 6(1)(b) GDPR</td></tr>
+  <tr><td>Name and display name</td><td>Display within the service and to connected applications</td><td>Art. 6(1)(b) GDPR</td></tr>
+  <tr><td>Password (hashed)</td><td>Authentication</td><td>Art. 6(1)(b) GDPR</td></tr>
+</table>
+
+<h3>Authentication data</h3>
+
+<table>
+  <tr><th>Data</th><th>Purpose</th><th>Legal basis</th></tr>
+  <tr><td>Login timestamps</td><td>Security monitoring, session management</td><td>Art. 6(1)(f) GDPR</td></tr>
+  <tr><td>IP address</td><td>Security monitoring, abuse prevention</td><td>Art. 6(1)(f) GDPR</td></tr>
+  <tr><td>User agent</td><td>Device identification for session management</td><td>Art. 6(1)(f) GDPR</td></tr>
+  <tr><td>Session tokens</td><td>Maintaining authenticated sessions</td><td>Art. 6(1)(b) GDPR</td></tr>
+</table>
+
+<h3>Authorisation data</h3>
+
+<table>
+  <tr><th>Data</th><th>Purpose</th><th>Legal basis</th></tr>
+  <tr><td>Organisation membership</td><td>Access control</td><td>Art. 6(1)(b) GDPR</td></tr>
+  <tr><td>Project roles and grants</td><td>Role-based access control for connected applications</td><td>Art. 6(1)(b) GDPR</td></tr>
+</table>
+
+<p>Legitimate interest, where relied on above, is the interest in a functioning
+and secure authentication service; without login records and addresses,
+credential-stuffing and brute-force attempts could be neither detected nor
+defended against.</p>
+
+<h2>What we do not do</h2>
+
+<p>No advertising is shown. No web analytics, tracking pixels, social media
+widgets, fonts or scripts are loaded from third parties. No personal data is
+sold, rented or transferred for marketing purposes. No automated
+decision-making or profiling within the meaning of Article 22 GDPR takes
+place.</p>
+
+<h2>Connected applications</h2>
+
+<p>When you sign in to a halogenOS service through this single sign-on, that
+service receives only the data covered by the scopes it requests — typically
+your username, name, email address and role assignments. Each connected service
+is covered by its own privacy policy, and those operated by the same controller
+are linked from the service in question.</p>
+
+<h2>Recipients and processors</h2>
+
+<table>
+  <tr><th>Recipient</th><th>Role</th><th>Basis</th></tr>
+  <tr><td>@hostingProvider@</td><td>Server hosting in @hostingLocation@</td><td>Processor, Art. 28 GDPR</td></tr>
+</table>
+
+<p>No data is transferred to a third country outside the EU/EEA. Servers and all
+stored data are located in @dataLocation@. No further cloud services, analytics
+providers or external processors are used.</p>
+
+<h2>Security</h2>
+
+<p>All connections use TLS. Passwords are stored using strong one-way hashing.
+Administrative access is restricted, and authentication events are logged so
+that security incidents can be investigated.</p>
+
+<h2>Retention</h2>
+
+<table>
+  <tr><th>Data</th><th>Retention</th></tr>
+  <tr><td>Account data</td><td>Until the account is deleted</td></tr>
+  <tr><td>Authentication logs</td><td>90 days</td></tr>
+  <tr><td>Session data</td><td>Until the session expires or you sign out</td></tr>
+  <tr><td>Audit logs</td><td>12 months</td></tr>
+</table>
+
+<p>When an account is deleted, the personal data associated with it is removed.
+Data subject to statutory retention obligations is retained accordingly and
+otherwise restricted from processing.</p>
+
+<h2>Your rights</h2>
+
+<p>Under the GDPR you have the right to obtain confirmation as to whether your
+data is processed and to access it (Article 15), to rectification (Article 16),
+to erasure (Article 17), to restriction of processing (Article 18), to data
+portability (Article 20), and to object to processing based on legitimate
+interests (Article 21). Where processing rests on consent, you may withdraw it
+at any time with effect for the future.</p>
+
+<p>To exercise any of these, write to
+<a href="mailto:@emailPrivacy@">@emailPrivacy@</a>. You will receive a response
+within one month; where a request is complex, that period may be extended, and
+you will be told if so.</p>
+
+<h2>Right to lodge a complaint</h2>
+
+<p>You may lodge a complaint with a supervisory authority, in particular in the
+Member State of your habitual residence, place of work, or the place of the
+alleged infringement. The authority competent for this controller is:</p>
+
+<p>@authorityName@<br>
+@authorityAddress@<br>
+<a href="@authorityWebsite@">@authorityWebsite@</a></p>
+
+<h2>Changes</h2>
+
+<p>This policy may be updated as the service changes. The current version is
+always available at this address.</p>
+
+<p>Last updated: @lastUpdatedEn@</p>
+
+</main>
+</body>
+</html>
