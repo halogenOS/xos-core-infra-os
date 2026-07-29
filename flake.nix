@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-26.05";
     foundrix = {
-      url = "git+file:///home/simao/workspace/foundrix";
+      url = "git+https://codeberg.org/xdevs23/foundrix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
