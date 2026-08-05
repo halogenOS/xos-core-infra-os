@@ -40,6 +40,7 @@ in
     hashedPassword = "$y$j9T$gV9uVMQ5oZ8mg4Opln0cz1$r2wok8rIwQm/7sdOEJT8QtKfCw.Jf3bHKHkZG6nF7c3";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK3LlSENwLSVob/uIKNoyjtSrffFs4lzNC9AMqxmEHSz simao@aludepp"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJfKqIYdQ+C/fWQic63h3XHSDuPcX10m22yewquDDix"
     ];
   };
   users.groups.${userName}.gid = config.users.users.${userName}.uid;
